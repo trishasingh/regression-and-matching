@@ -243,6 +243,9 @@ ATE <- bind_rows(
 
 # Load saved simulation results and compute bias
 load("simulation_results.RData")
+# Delete later:
+# n_sim <- simulation_results$iteration %>% max
+
 simulation_results <- simulation_results %>%
   mutate(
     method = str_sub(model, start=1, end=1),
