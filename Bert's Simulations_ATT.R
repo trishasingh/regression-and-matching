@@ -218,12 +218,12 @@ for(sim in 1:2){
       str_c("Sim", sim, "Iter", k, "of", n_sim, "done at", Sys.time(), sep=" ") %>%
         print()
       save(simulation_results, file="simulation_results.RData")
-      save(saved_P, file="saved_P.RData")
+      # save(saved_P, file="saved_P.RData")
     }
   }
 }
 save(simulation_results, file="simulation_results.RData")
-save(saved_P, file="saved_P.RData")
+# save(saved_P, file="saved_P.RData")
 
 # Above (for n_sim=1000) took X time to run on Amherst College RStudio server
 
