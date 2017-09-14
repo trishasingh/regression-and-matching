@@ -44,12 +44,12 @@ model_names <- c("1_0", "1_1", "1_2", "2_1", "2_2", "3_1", "3_2")
 
 # Functions to compute propensity scores based on covariate values
 compute_prop_score_1 <- function(a, b) {
-  x <- a + a^2 + b
+  x <- a - 3*a^2 - 3*b
   prop_score <- 1/(1+exp(-x))
   return(prop_score)
 }
 compute_prop_score_2 <- function(a, b) {
-  x <- a + b
+  x <- a - 6*b
   prop_score <- 1/(1+exp(-x))
   return(prop_score)
 }
@@ -126,17 +126,21 @@ for(sim in 1:2){
     P <- P %>%
       mutate(
         di = rbinom(n = n(), size = 1, prob = prop_score),
-        yi = ifelse(di == 1, y1, y0)
+        yi = ifelse(di == 1, y1, y0),
+        delta1 = delta*di # Treatment effect only for treated individuals
       )
     # Save treated/untreated variable and resulting observation
-    saved_P <- P %>%
-      mutate(
-        simulation = sim,
-        iteration = k
-      ) %>%
-      # select(simulation, iteration, ID, di) %>%
-      select(di) %>%
-      bind_rows(saved_P, .)
+    # saved_P <- P %>%
+    #   mutate(
+    #     simulation = sim,
+    #     iteration = k
+    #   ) %>%
+    #   # select(simulation, iteration, ID, di) %>%
+    #   select(di) %>%
+    #   bind_rows(saved_P, .)
+    
+    # Save Average Treatment Effect on Treated for analysis later
+    att <- rep(mean(P$delta1), 7)
     
     # Estimation 1.0
     model_1_0 <- P %>%
@@ -199,7 +203,8 @@ for(sim in 1:2){
     ID_variables <- data_frame(
       simulation = sim,
       iteration = k,
-      model = model_names
+      model = model_names,
+      ATT = att
     )
     beta_di <-
       bind_rows(
@@ -218,12 +223,12 @@ for(sim in 1:2){
       str_c("Sim", sim, "Iter", k, "of", n_sim, "done at", Sys.time(), sep=" ") %>%
         print()
       save(simulation_results, file="simulation_results.RData")
-      # save(saved_P, file="saved_P.RData")
+      save(saved_P, file="saved_P.RData")
     }
   }
 }
 save(simulation_results, file="simulation_results.RData")
-# save(saved_P, file="saved_P.RData")
+save(saved_P, file="saved_P.RData")
 
 # Above (for n_sim=1000) took X time to run on Amherst College RStudio server
 
@@ -234,14 +239,14 @@ save(simulation_results, file="simulation_results.RData")
 
 # Analyze Results ---------------------------------------------------------
 # Compute average treatment effect for both simulations
-ATE <- bind_rows(
-  P_1 %>%
-    summarise(ATE = mean(delta)) %>%
-    mutate(simulation = 1),
-  P_2 %>%
-    summarise(ATE = mean(delta)) %>%
-    mutate(simulation = 2)
-)
+# ATE <- bind_rows(
+#   P_1 %>%
+#     summarise(ATE = mean(delta)) %>%
+#     mutate(simulation = 1),
+#   P_2 %>%
+#     summarise(ATE = mean(delta)) %>%
+#     mutate(simulation = 2)
+# )
 
 # Load saved simulation results and compute bias
 load("simulation_results.RData")
@@ -258,8 +263,8 @@ simulation_results <- simulation_results %>%
                         "Inverse Prop Score Weights" = "3"
     )
   ) %>%
-  left_join(ATE, by="simulation") %>%
-  mutate(bias = estimate - ATE) %>%
+  #left_join(ATE, by="simulation") %>%
+  mutate(bias = estimate - ATT) %>%
   select(model, method, simulation, bias, std.error)
 
 
