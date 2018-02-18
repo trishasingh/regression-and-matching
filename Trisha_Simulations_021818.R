@@ -1,5 +1,4 @@
 # Trisha's Simulations
-# Test
 # Final Simulations
 
 # Setup -------------------------------------------------------------------
@@ -934,7 +933,7 @@ simulation_results_new <- simulation_results %>%
     #
     # Not sure about these:
     #
-    bias = estimate - 76,
+    bias = estimate - list_att,
     variance = std.error^2
   ) %>% 
   # Match ordering of Placeholder_Results.xlsx
