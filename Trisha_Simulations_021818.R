@@ -918,6 +918,36 @@ load("simulation_results.RData")
 # Delete later:
 # n_sim <- simulation_results$iteration %>% max
 
+
+
+# Bert's code to write simulation_results data frame to results_for_figure.csv
+# so that format matches Placeholder_Results.xlsx
+simulation_results %>% 
+  # Separate model variable
+  separate(model, c("method", "PropModel", "confounding", "HTE"), sep = "_") %>% 
+  # Reformat data
+  mutate(
+    prop_hte_facet = str_c(PropModel, HTE), 
+    method = str_c("method", method),
+    HTE = str_sub(HTE, 4, 4) %>% as.integer(),
+    confounding = str_sub(confounding, 5, 5) %>% as.integer() %>% `-`(1) %>% as.integer()
+  ) %>% 
+  # Match ordering of Placeholder_Results.xlsx
+  select(prop_hte_facet, PropModel, HTE, confounding, method, everything()) %>% 
+  arrange(PropModel, desc(HTE), method) %>% 
+  # Make column names match
+  rename(
+    `PropHTE (facet)` = prop_hte_facet,
+    `Strength of confounding (x axis)` = confounding,
+    `Method (line)` = method
+  ) %>%
+  # Write to CSV
+  write_csv(path = "results_for_figure.csv")
+
+
+
+
+# ORIGINAL CODE
 simulation_results <- simulation_results %>%
   mutate(
     method = str_sub(grepl("model",.), start=1, end=1),
