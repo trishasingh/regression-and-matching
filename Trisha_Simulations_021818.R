@@ -930,16 +930,23 @@ simulation_results %>%
     prop_hte_facet = str_c(PropModel, HTE), 
     method = str_c("method", method),
     HTE = str_sub(HTE, 4, 4) %>% as.integer(),
-    confounding = str_sub(confounding, 5, 5) %>% as.integer() %>% `-`(1) %>% as.integer()
+    confounding = str_sub(confounding, 5, 5) %>% as.integer() %>% `-`(1) %>% as.integer(),
+    #
+    # Not sure about these:
+    #
+    bias = estimate - 76,
+    variance = std.error^2
   ) %>% 
   # Match ordering of Placeholder_Results.xlsx
-  select(prop_hte_facet, PropModel, HTE, confounding, method, everything()) %>% 
+  select(prop_hte_facet, PropModel, HTE, confounding, method, bias, variance) %>% 
   arrange(PropModel, desc(HTE), method) %>% 
   # Make column names match
   rename(
     `PropHTE (facet)` = prop_hte_facet,
     `Strength of confounding (x axis)` = confounding,
-    `Method (line)` = method
+    `Method (line)` = method,
+    `Bias (y axis)` = bias,
+    `Variance (y axis)` = variance
   ) %>%
   # Write to CSV
   write_csv(path = "results_for_figure.csv")
