@@ -922,7 +922,7 @@ load("simulation_results.RData")
 
 # Bert's code to write simulation_results data frame to results_for_figure.csv
 # so that format matches Placeholder_Results.xlsx
-simulation_results %>% 
+simulation_results_new <- simulation_results %>% 
   # Separate model variable
   separate(model, c("method", "PropModel", "confounding", "HTE"), sep = "_") %>% 
   # Reformat data
@@ -947,9 +947,10 @@ simulation_results %>%
     `Method (line)` = method,
     `Bias (y axis)` = bias,
     `Variance (y axis)` = variance
-  ) %>%
-  # Write to CSV
-  write_csv(path = "results_for_figure.csv")
+  )
+
+# Write to CSV
+write_csv(simulation_results_new, path = "results_for_figure.csv")
 
 
 
