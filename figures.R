@@ -1,6 +1,6 @@
 library(tidyverse)
 library(stringr)
-results <- readxl::read_xlsx("Placeholder_Results.xlsx") %>%
+results <- read_csv("results_for_figure.csv") %>%
   mutate(`Method (line)` = str_sub(`Method (line)`, 7, 7))
 
 # Two options for faceting
