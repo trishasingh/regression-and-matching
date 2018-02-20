@@ -1,3 +1,5 @@
+#!/bin/Rscript
+
 # Trisha's Simulations
 # Final Simulations
 
@@ -954,33 +956,33 @@ write_csv(simulation_results_new, path = "results_for_figure.csv")
 
 
 
-# ORIGINAL CODE
-simulation_results <- simulation_results %>%
-  mutate(
-    method = str_sub(grepl("model",.), start=1, end=1),
-    method = factor(method),
-    method = fct_recode(method,
-                        "Just Regression" = "1",
-                        "Matching" = "2",
-                        "Inverse Prop Score Weights" = "3"
-    )
-  ) %>%
-  #left_join(ATE, by="simulation") %>%
-  mutate(bias = estimate - ATT) %>%
-  select(model, method, bias, std.error)
-
-
-# Plot
-# simulation_results %>%
-#   gather(type, value, -c(model, method, simulation)) %>%
-#   ggplot() +
-#   geom_boxplot(aes(x=model, y=value, fill=method)) +
-#   facet_grid(type~simulation, scales = "free") +
-#   labs(title = str_c(n_sim, " iterations"), y = "") +
-#   scale_fill_brewer(palette = "Set2")
-
-# Table
-simulation_results %>%
-  group_by(simulation, model) %>%
-  summarise(bias=mean(bias), std.error = mean(std.error)) %>%
-  kable(digits=4)
+# # ORIGINAL CODE
+# simulation_results <- simulation_results %>%
+#   mutate(
+#     method = str_sub(grepl("model",.), start=1, end=1),
+#     method = factor(method),
+#     method = fct_recode(method,
+#                         "Just Regression" = "1",
+#                         "Matching" = "2",
+#                         "Inverse Prop Score Weights" = "3"
+#     )
+#   ) %>%
+#   #left_join(ATE, by="simulation") %>%
+#   mutate(bias = estimate - ATT) %>%
+#   select(model, method, bias, std.error)
+# 
+# 
+# # Plot
+# # simulation_results %>%
+# #   gather(type, value, -c(model, method, simulation)) %>%
+# #   ggplot() +
+# #   geom_boxplot(aes(x=model, y=value, fill=method)) +
+# #   facet_grid(type~simulation, scales = "free") +
+# #   labs(title = str_c(n_sim, " iterations"), y = "") +
+# #   scale_fill_brewer(palette = "Set2")
+# 
+# # # Table
+# # simulation_results %>%
+# #   group_by(model) %>%
+# #   summarise(bias=mean(bias), std.error = mean(std.error)) %>%
+# #   kable(digits=4)
