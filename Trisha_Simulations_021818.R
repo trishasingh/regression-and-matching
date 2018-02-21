@@ -954,6 +954,7 @@ simulation_results_new <- simulation_results %>%
 write_csv(simulation_results_new, path = "results_for_figure.csv")
 
 
+# Take results for figure and group by model, and take avg of stats so that there are 90 rows.
 
 
 # # ORIGINAL CODE
