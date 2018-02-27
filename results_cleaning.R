@@ -2,7 +2,7 @@ library(tidyverse)
 library(stringr)
 results <- read_csv("results_for_figure_0224.csv") %>%
   mutate(`Method (line)` = str_sub(`Method (line)`, 7, 7)) %>% 
-  group_by(`PropHTE (facet)`, `Strength of confounding (x axis)`, `Method (line)`, PropModel) %>% 
+  group_by(`PropHTE (facet)`, `Strength of confounding (x axis)`, `Method (line)`, PropModel, HTE) %>% 
   summarize(`Bias (y axis)` = mean(`Bias (y axis)`), `Variance (y axis)` = mean(`Variance (y axis)`))
 
 baseplot_1 <- ggplot(results, aes(x = `Strength of confounding (x axis)`, col = `Method (line)`, shape = `Method (line)`)) +
